@@ -6,9 +6,34 @@ var moment = require('moment-timezone');
 router.get('/getAll', async (req, res) => {
     try {
         var posts = await PostDataModel.find();
-        res.json(posts);
+        res.status(200).json(posts);
     } catch (error) {
-        res.json({ message: error.message });
+        res.status(400).json({ message: error.message });
+    }
+})
+
+router.get('/getAllGrouped', async (req, res) => {
+    var resolved=[];
+    var unresolved=[];
+    try {
+        var posts = await PostDataModel.aggregate([
+            {
+              '$group': {
+                '_id': '$resolved', 
+                'data': {
+                  '$push': '$$ROOT'
+                }
+              }
+            }
+          ]);
+
+          posts.forEach((el)=>{
+              if(el["_id"]){ resolved=el["data"];} else {unresolved=el["data"];}
+          });
+
+        res.status(200).json({"resolved":resolved,"unresolved":unresolved});
+    } catch (error) {
+        res.status(400).json({ message: error.message });
     }
 })
 
