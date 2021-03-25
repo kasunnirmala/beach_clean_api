@@ -1,0 +1,22 @@
+{
+  "name": "beach_clean_api",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "nodemon node app.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^8.2.0",
+    "express": "^4.17.1",
+    "moment": "^2.29.1",
+    "moment-timezone": "^0.5.33",
+    "mongodb": "^3.6.5",
+    "mongoose": "^5.12.2",
+    "nodemon": "^2.0.7",
+    "socket.io": "^4.0.0"
+  }
+}
