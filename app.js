@@ -25,6 +25,6 @@ app.use('/api/v1/post-data', PostDataRoute);
 
 
 // http is used to use this for io socket in future
-http.listen(2431, () => {
-  console.log('listening on *:2431');
+http.listen(6654, () => {
+  console.log('listening on *:6654');
 });
