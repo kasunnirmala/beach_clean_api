@@ -2,6 +2,8 @@ const express = require('express');
 const router = express.Router();
 const PostDataModel = require('../model/post-data');
 var moment = require('moment-timezone');
+var fcm = require('fcm-notification');
+var FCM = new fcm('./fcm.json');
 
 router.get('/getAll', async (req, res) => {
     try {
@@ -39,12 +41,32 @@ router.get('/getAllGrouped', async (req, res) => {
 
 router.post('/add', async (req, res) => {
     console.log("Added new Post Data Value");
-    req.body['_id']=null;
+    delete req.body._id;
     try {
         const savedPostData = await new PostDataModel(req.body).save();
 
         console.log(savedPostData);
-        res.status(200).json("Successfully Saved");
+        var message = {
+            data: { 
+                post_id:`${savedPostData['_id']}`,
+            },
+            notification:{
+                title : 'New Beach Problem',
+                body : 'New Polluted Beach is Listed'
+            },
+           topic:"tomobile"
+            };
+    FCM.send(message, function(err, response) {
+        if(err){
+            console.log('error found', err);
+            res.status(400).json(err);
+        }else {
+            console.log('response here', response);
+            // res.status(200).json("SUCCESS");
+            res.status(200).json({"id":savedPostData['_id'],"message":"Successfully Saved"});
+        }
+    })
+        
     } catch (error) {
         res.status(400).json(error.message);
       
@@ -60,8 +82,31 @@ router.post('/update', async (req, res) => {
         // const savedPostData = await new PostDataModel(req.body).save();
 
         console.log(savedPostData);
-        res.status(200).json("Successfully Saved");
-    } catch (error) {
+
+
+        var message = {
+            data: { 
+                post_id:`${savedPostData['_id']}`,
+            },
+            notification:{
+                title : 'Beach Problem Resolved',
+                body : `${savedPostData['_id']} is resolved`
+            },
+           topic:"tomobile"
+            };
+     
+            FCM.send(message, function(err, response) {
+                if(err){
+                    console.log('error found', err);
+                    res.status(400).json(err);
+                }else {
+                    console.log('response here', response);
+                    // res.status(200).json("SUCCESS");
+                    res.status(200).json({"id":savedPostData['_id'],"message":"Successfully Saved"});
+                }
+            })
+        
+        } catch (error) {
         res.status(400).json(error.message);
       
     }
